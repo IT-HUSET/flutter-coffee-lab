@@ -1,22 +1,37 @@
 /// A simple Flutter app for ordering coffee (this is just a example starter app).
 import 'package:flutter/material.dart';
+import 'package:flutter_coffee/data/api.dart';
+import 'package:flutter_coffee/data/service.dart';
+import 'package:flutter_coffee/ui/order_placed.dart';
+import 'package:flutter_coffee/ui/place_order.dart';
+import 'package:flutter_coffee/ui/products.dart';
+import 'package:flutter_coffee/ui/welcome.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp(coffeeService: CoffeeService(api: CoffeeAPI())));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({required this.coffeeService, super.key});
+
+  final CoffeeService coffeeService;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Covfefe',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
-        useMaterial3: true,
+        useMaterial3: false,
+        primarySwatch: Colors.brown,
       ),
-      home: const MyHomePage(title: 'Welcome to Flutter Coffee!'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => WelcomeScreen(coffeeService: coffeeService),
+        '/product_selection': (context) => ProductSelection(coffeeService: coffeeService),
+        '/order_confirmation': (context) => OrderConfirmationScreen(coffeeService: coffeeService),
+        '/final_screen': (context) => FinalScreen(coffeeService: coffeeService),
+      },
     );
   }
 }
@@ -54,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _incrementCounter,
         label: const Text('Add ☕️'),

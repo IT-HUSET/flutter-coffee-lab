@@ -6,25 +6,29 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_coffee/data/api.dart';
+import 'package:flutter_coffee/data/service.dart';
+import 'package:flutter_coffee/ui/welcome.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_coffee/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('WelcomeScreen has a title and image', (WidgetTester tester) async {
+    await binding.setSurfaceSize(const Size(1920, 1080));
+
+    final coffeeService = CoffeeService(api: CoffeeAPI());
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MaterialApp(home: WelcomeScreen(coffeeService: coffeeService)));
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that our WelcomeScreen has "Welcome to\nKaffiKrútur" as a title.
+    expect(find.text('Welcome to\nKaffiKrútur'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that our WelcomeScreen has an image.
+    expect(find.byType(Image), findsWidgets);
   });
 }
